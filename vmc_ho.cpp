@@ -1,10 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include <cmath>
 
-#define ALPHA_INIT      0.2
-#define ALPHA_UPDATE    0.05
-#define N_ALPHA         10
+#define ALPHA_INIT      0.05
+#define ALPHA_UPDATE    0.01
+#define N_ALPHA         100
 
 #define MC_CYCLES       1000000L
 
@@ -15,11 +16,11 @@
 #define RAND            (double) rand() / RAND_MAX
 
 double wave_function(double *x, double alpha) {
-    double x_sum2 = 0;
+    double x2_sum = 0;
     for (int i = 0; i < N; ++i) {
-        x_sum2 += x[i] * x[i];
+        x2_sum += x[i] * x[i];
     }
-    return exp(- alpha * x_sum2);
+    return exp(- alpha * x2_sum);
 }
 
 double local_energy(double *x, double alpha) {
@@ -34,7 +35,7 @@ void metropolis(double step_size, double **output, unsigned int seed = ((unsigne
     double *x_old = new double[N];
     double *x_new = new double[N];
     double wf_old, wf_new;
-    double delta_E;
+    double E_L;
     double E = 0, E2 = 0; 
     int idx_p;
 
@@ -63,9 +64,9 @@ void metropolis(double step_size, double **output, unsigned int seed = ((unsigne
                 wf_old = wf_new;
             }
 
-            delta_E = local_energy(x_old, alpha);
-            E += delta_E;
-            E2 += delta_E * delta_E;
+            E_L = local_energy(x_old, alpha);
+            E += E_L;
+            E2 += E_L * E_L;
         }
 
         E /= MC_CYCLES;
@@ -74,15 +75,14 @@ void metropolis(double step_size, double **output, unsigned int seed = ((unsigne
         output[alpha_idx][0] = alpha;
         output[alpha_idx][1] = E;
         output[alpha_idx][2] = E2 - E*E;
-        output[alpha_idx][3] = sqrt((E2 - E*E) / MC_CYCLES);
         
         auto end = std::chrono::steady_clock::now();
         double time = (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9);
-        printf("Alpha: %.2f | E: %.6f | Var: %.6f | Error: %.6f | Time: %.3fs \n", 
+        printf("Alpha: %.2f | E: %.6f | E2: %.6f | Var: %.6f | Time: %.3fs \n", 
                 output[alpha_idx][0], 
                 output[alpha_idx][1], 
-                output[alpha_idx][2], 
-                output[alpha_idx][3],
+                E2, 
+                output[alpha_idx][2],
                 time);
         
         alpha += ALPHA_UPDATE;
@@ -95,13 +95,21 @@ void metropolis(double step_size, double **output, unsigned int seed = ((unsigne
 int main(int argc, char **argv) {
     double **output = new double *[N_ALPHA];
     for (int i = 0; i < N_ALPHA; ++i) {
-        output[i] = new double[4];
+        output[i] = new double[3];
     }
 
     auto start = std::chrono::steady_clock::now();
     metropolis(1.0, output);
     auto end = std::chrono::steady_clock::now();
     printf("Simulation time: %f seconds \n", (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9));
+
+    std::ofstream file("results/vmc_ho_N_" + std::to_string(N) + "_omega_" + std::to_string(OMEGA_HO) + "_MC_1E" + std::to_string((int) log10(MC_CYCLES)) + "_na_" + std::to_string(N_ALPHA) + ".txt");
+    if (file.is_open()) {
+        for (int i = 0; i < N_ALPHA; ++i) {
+            file << output[i][0] << "," << output[i][1] << "," << output[i][2] << "\n";
+        }
+        file.close();
+    }
 
     for (int i = 0; i < N_ALPHA; ++i) {
         delete[] output[i];
