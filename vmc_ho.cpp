@@ -4,10 +4,11 @@
 #include <cmath>
 
 #define ALPHA_INIT      0.05
-#define ALPHA_UPDATE    0.01
-#define N_ALPHA         100
+#define ALPHA_UPDATE    0.05
+#define N_ALPHA         20
 
 #define MC_CYCLES       1000000L
+#define STEP_SIZE       1.0
 
 #define N               100
 #define OMEGA_HO        1
@@ -31,7 +32,7 @@ double local_energy(double *x, double alpha) {
     return E_L;
 }
 
-void metropolis(double step_size, double **output, unsigned int seed = ((unsigned) time(NULL))) {
+void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
     double *x_old = new double[N];
     double *x_new = new double[N];
     double wf_old, wf_new;
@@ -47,13 +48,13 @@ void metropolis(double step_size, double **output, unsigned int seed = ((unsigne
         auto start = std::chrono::steady_clock::now();
 
         for (idx_p = 0; idx_p < N; ++idx_p) {
-            x_old[idx_p] = step_size * (RAND - 0.5);
+            x_old[idx_p] = STEP_SIZE * (RAND - STEP_SIZE * 0.5);
         }
         wf_old = wave_function(x_old, alpha);
 
         for (long t = 0; t < MC_CYCLES; ++t) {
             for (idx_p = 0; idx_p < N; ++idx_p) {
-                x_new[idx_p] = x_old[idx_p] + step_size * (RAND - 0.5);
+                x_new[idx_p] = x_old[idx_p] + STEP_SIZE * (RAND - STEP_SIZE * 0.5);
             }
             wf_new = wave_function(x_new, alpha);
 
@@ -99,7 +100,7 @@ int main(int argc, char **argv) {
     }
 
     auto start = std::chrono::steady_clock::now();
-    metropolis(1.0, output);
+    metropolis(output);
     auto end = std::chrono::steady_clock::now();
     printf("Simulation time: %f seconds \n", (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9));
 
