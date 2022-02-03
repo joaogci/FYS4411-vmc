@@ -5,16 +5,17 @@
 
 #define ALPHA_INIT      0.05
 #define ALPHA_UPDATE    0.05
-#define N_ALPHA         20
+#define N_ALPHA         40
 
 #define MC_CYCLES       1000000L
-#define STEP_SIZE       1.0
+#define STEP_SIZE       1
 
-#define N               100
+#define N               1
 #define OMEGA_HO        1
 #define E_EXACT         0.5 * N * OMEGA_HO
 
 #define RAND            (double) rand() / RAND_MAX
+#define SAVE_RESULTS    false
 
 double wave_function(double *x, double alpha) {
     double x2_sum = 0;
@@ -48,13 +49,13 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
         auto start = std::chrono::steady_clock::now();
 
         for (idx_p = 0; idx_p < N; ++idx_p) {
-            x_old[idx_p] = STEP_SIZE * (RAND - STEP_SIZE * 0.5);
+            x_old[idx_p] = STEP_SIZE * (RAND - 0.5);
         }
         wf_old = wave_function(x_old, alpha);
 
         for (long t = 0; t < MC_CYCLES; ++t) {
             for (idx_p = 0; idx_p < N; ++idx_p) {
-                x_new[idx_p] = x_old[idx_p] + STEP_SIZE * (RAND - STEP_SIZE * 0.5);
+                x_new[idx_p] = x_old[idx_p] + STEP_SIZE * (RAND - 0.5);
             }
             wf_new = wave_function(x_new, alpha);
 
@@ -104,13 +105,16 @@ int main(int argc, char **argv) {
     auto end = std::chrono::steady_clock::now();
     printf("Simulation time: %f seconds \n", (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9));
 
-    std::ofstream file("results/vmc_ho_N_" + std::to_string(N) + "_omega_" + std::to_string(OMEGA_HO) + "_MC_1E" + std::to_string((int) log10(MC_CYCLES)) + "_na_" + std::to_string(N_ALPHA) + ".txt");
-    if (file.is_open()) {
-        for (int i = 0; i < N_ALPHA; ++i) {
-            file << output[i][0] << "," << output[i][1] << "," << output[i][2] << "\n";
+    if (SAVE_RESULTS) {
+        std::ofstream file("results/vmc_ho_N_" + std::to_string(N) + "_omega_" + std::to_string(OMEGA_HO) + "_MC_1E" + std::to_string((int) log10(MC_CYCLES)) + "_na_" + std::to_string(N_ALPHA) + ".txt");
+        if (file.is_open()) {
+            for (int i = 0; i < N_ALPHA; ++i) {
+                file << output[i][0] << "," << output[i][1] << "," << output[i][2] << "\n";
+            }
+            file.close();
         }
-        file.close();
     }
+    
 
     for (int i = 0; i < N_ALPHA; ++i) {
         delete[] output[i];
