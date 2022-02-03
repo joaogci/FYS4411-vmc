@@ -5,12 +5,12 @@
 
 #define ALPHA_INIT      0.05
 #define ALPHA_UPDATE    0.05
-#define N_ALPHA         40
+#define N_ALPHA         20
 
 #define MC_CYCLES       1000000L
-#define STEP_SIZE       1
+#define STEP_SIZE       1.0
 
-#define N               1
+#define N               100
 #define OMEGA_HO        1
 #define E_EXACT         0.5 * N * OMEGA_HO
 
@@ -27,8 +27,9 @@ double wave_function(double *x, double alpha) {
 
 double local_energy(double *x, double alpha) {
     double E_L = 0;
-    for (int i = 0; i < N; ++i) {
-        E_L += alpha - 2 * alpha * x[i] + 0.5 * OMEGA_HO * OMEGA_HO * x[i] * x[i];
+     for (int i = 0; i < N; ++i) {
+        E_L += alpha - 2 * alpha * alpha * x[i] * x[i] + 0.5 
+                * OMEGA_HO * OMEGA_HO * x[i] * x[i];
     }
     return E_L;
 }
