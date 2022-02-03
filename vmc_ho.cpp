@@ -11,36 +11,48 @@
 #define STEP_SIZE       1.0
 
 #define N               100
+#define D               2
 #define OMEGA_HO        1
-#define E_EXACT         0.5 * N * OMEGA_HO
+#define E_EXACT         D * 0.5 * N * OMEGA_HO
 
 #define RAND            (double) rand() / RAND_MAX
 #define SAVE_RESULTS    false
 
-double wave_function(double *x, double alpha) {
-    double x2_sum = 0;
+double wave_function(double **r, double alpha) {
+    double r2_sum = 0;
     for (int i = 0; i < N; ++i) {
-        x2_sum += x[i] * x[i];
+        for (int dim = 0; dim < D; ++dim) {
+            r2_sum += r[i][dim] * r[i][dim];
+        }
     }
-    return exp(- alpha * x2_sum);
+    return exp(- alpha * r2_sum);
 }
 
-double local_energy(double *x, double alpha) {
+double local_energy(double **r, double alpha) {
+    double r2_sum;
     double E_L = 0;
-     for (int i = 0; i < N; ++i) {
-        E_L += alpha - 2 * alpha * alpha * x[i] * x[i] + 0.5 
-                * OMEGA_HO * OMEGA_HO * x[i] * x[i];
+    for (int i = 0; i < N; ++i) {
+        r2_sum = 0;
+        for (int dim = 0; dim < D; ++dim) {
+            r2_sum += r[i][dim] * r[i][dim];
+        }
+
+        E_L += D * alpha - 2 * alpha * alpha * r2_sum + 0.5 * OMEGA_HO * OMEGA_HO * r2_sum;
     }
     return E_L;
 }
 
 void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
-    double *x_old = new double[N];
-    double *x_new = new double[N];
+    double **r_old = new double*[N];
+    double **r_new = new double*[N];
+    for (int i = 0; i < N; ++i) {
+        r_old[i] = new double[D];
+        r_new[i] = new double[D];
+    }
     double wf_old, wf_new;
     double E_L;
     double E = 0, E2 = 0; 
-    int idx_p;
+    int idx_p, dim;
 
     printf("E_exact: %.3f \n", E_EXACT);
     srand(seed);
@@ -50,24 +62,30 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
         auto start = std::chrono::steady_clock::now();
 
         for (idx_p = 0; idx_p < N; ++idx_p) {
-            x_old[idx_p] = STEP_SIZE * (RAND - 0.5);
+            for (dim = 0; dim < D; ++dim) {
+                r_old[idx_p][dim] = STEP_SIZE * (RAND - 0.5);
+            }   
         }
-        wf_old = wave_function(x_old, alpha);
+        wf_old = wave_function(r_old, alpha);
 
         for (long t = 0; t < MC_CYCLES; ++t) {
             for (idx_p = 0; idx_p < N; ++idx_p) {
-                x_new[idx_p] = x_old[idx_p] + STEP_SIZE * (RAND - 0.5);
+                for (dim = 0; dim < D; ++dim) {
+                    r_new[idx_p][dim] = r_old[idx_p][dim] + STEP_SIZE * (RAND - 0.5);
+                }
             }
-            wf_new = wave_function(x_new, alpha);
+            wf_new = wave_function(r_new, alpha);
 
             if (RAND <= wf_new*wf_new / (wf_old*wf_old)) {
                 for (idx_p = 0; idx_p < N; ++idx_p) {
-                    x_old[idx_p] = x_new[idx_p];
+                    for (dim = 0; dim < D; ++dim) {
+                        r_old[idx_p][dim] = r_new[idx_p][dim];
+                    }
                 }
                 wf_old = wf_new;
             }
 
-            E_L = local_energy(x_old, alpha);
+            E_L = local_energy(r_old, alpha);
             E += E_L;
             E2 += E_L * E_L;
         }
@@ -91,8 +109,12 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
         alpha += ALPHA_UPDATE;
     }
 
-    delete[] x_new;
-    delete[] x_old;
+    for (idx_p = 0; idx_p < N; ++idx_p) {
+        delete[] r_new[idx_p];
+        delete[] r_old[idx_p];
+    }
+    delete[] r_new;
+    delete[] r_old;
 }
 
 int main(int argc, char **argv) {
