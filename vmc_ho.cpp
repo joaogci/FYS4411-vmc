@@ -2,20 +2,20 @@
 #include <fstream>
 #include <chrono>
 #include <cmath>
+#include "rng.h"
 
-#define ALPHA_INIT      0.05
-#define ALPHA_UPDATE    0.05
-#define N_ALPHA         20
+#define ALPHA_INIT      0.1
+#define ALPHA_UPDATE    0.1
+#define N_ALPHA         10
 
 #define MC_CYCLES       1000000L
-#define STEP_SIZE       1.0
+#define STEP_SIZE       0.5
 
 #define N               100
-#define D               2
+#define D               3
 #define OMEGA_HO        1
 #define E_EXACT         D * 0.5 * N * OMEGA_HO
 
-#define RAND            (double) rand() / RAND_MAX
 #define SAVE_RESULTS    false
 
 double wave_function(double **r, double alpha) {
@@ -29,17 +29,13 @@ double wave_function(double **r, double alpha) {
 }
 
 double local_energy(double **r, double alpha) {
-    double r2_sum;
-    double E_L = 0;
+    double r2_sum = 0;
     for (int i = 0; i < N; ++i) {
-        r2_sum = 0;
         for (int dim = 0; dim < D; ++dim) {
             r2_sum += r[i][dim] * r[i][dim];
         }
-
-        E_L += D * alpha - 2 * alpha * alpha * r2_sum + 0.5 * OMEGA_HO * OMEGA_HO * r2_sum;
     }
-    return E_L;
+    return N * D * alpha - 2 * alpha * alpha * r2_sum + 0.5 * OMEGA_HO * OMEGA_HO * r2_sum;
 }
 
 void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
@@ -55,7 +51,7 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
     int idx_p, dim;
 
     printf("E_exact: %.3f \n", E_EXACT);
-    srand(seed);
+    RNG rng(seed);
 
     double alpha = ALPHA_INIT;
     for (int alpha_idx = 0; alpha_idx < N_ALPHA; ++alpha_idx) {
@@ -63,7 +59,7 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
 
         for (idx_p = 0; idx_p < N; ++idx_p) {
             for (dim = 0; dim < D; ++dim) {
-                r_old[idx_p][dim] = STEP_SIZE * (RAND - 0.5);
+                r_old[idx_p][dim] = STEP_SIZE * (rng.rand_uniform() - 0.5);
             }   
         }
         wf_old = wave_function(r_old, alpha);
@@ -71,12 +67,12 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
         for (long t = 0; t < MC_CYCLES; ++t) {
             for (idx_p = 0; idx_p < N; ++idx_p) {
                 for (dim = 0; dim < D; ++dim) {
-                    r_new[idx_p][dim] = r_old[idx_p][dim] + STEP_SIZE * (RAND - 0.5);
+                    r_new[idx_p][dim] = r_old[idx_p][dim] + STEP_SIZE * (rng.rand_uniform() - 0.5);
                 }
             }
             wf_new = wave_function(r_new, alpha);
 
-            if (RAND <= wf_new*wf_new / (wf_old*wf_old)) {
+            if (rng.rand_uniform() <= wf_new*wf_new / (wf_old*wf_old)) {
                 for (idx_p = 0; idx_p < N; ++idx_p) {
                     for (dim = 0; dim < D; ++dim) {
                         r_old[idx_p][dim] = r_new[idx_p][dim];
