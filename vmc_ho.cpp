@@ -9,6 +9,7 @@
 #define N_ALPHA         10
 
 #define MC_CYCLES       1000000L
+#define EQUI_CYCLES     100000L
 #define STEP_SIZE       0.5
 
 #define N               100
@@ -81,13 +82,15 @@ void metropolis(double **output, unsigned int seed = ((unsigned) time(NULL))) {
                 wf_old = wf_new;
             }
 
-            E_L = local_energy(r_old, alpha);
-            E += E_L;
-            E2 += E_L * E_L;
+            if (t > EQUI_CYCLES) {
+                E_L = local_energy(r_old, alpha);
+                E += E_L;
+                E2 += E_L * E_L;
+            }            
         }
 
-        E /= MC_CYCLES;
-        E2 /= MC_CYCLES;
+        E /= (MC_CYCLES - EQUI_CYCLES);
+        E2 /= (MC_CYCLES - EQUI_CYCLES);
 
         output[alpha_idx][0] = alpha;
         output[alpha_idx][1] = E;
