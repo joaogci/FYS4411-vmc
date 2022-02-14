@@ -1,7 +1,8 @@
 */.DS_Store
 .DS_Store
 .vscode
-
+./morten_code
+morten_code
 
 # Prerequisites
 *.d
