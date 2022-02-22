@@ -1,7 +1,8 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <cmath>
+#include <vector>
+#include <string>
 
 #include "rng.h"
 
@@ -25,10 +26,20 @@ private:
     bool set_params = false;
     bool set_hamiltonian = false;
 
+    std::vector<double> alphas;
+    std::vector<long double> energies;
+    std::vector<long double> energies2;
+    std::vector<long double> variances;
+    std::vector<double> wall_time_alpha;
+    double wall_time = 0;
+
 public:
     System();
     System(unsigned int seed);
     ~System();
+
+    double get_wall_time();
+    void write_results(std::string name, std::string path);
 
     void init_particles(int N_, int dim_);
     void set_simulation_params(long mc_cycles_, double equi_fraction_, double step_length_);

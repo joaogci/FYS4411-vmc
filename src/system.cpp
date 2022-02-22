@@ -1,4 +1,11 @@
 #include <iostream>
+#include <cmath>
+#include <chrono>
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
 
 #include "system.h"
 #include "rng.h"
@@ -22,6 +29,7 @@ void System::run_metropolis(double alpha_) {
 
     alpha = alpha_;
     
+    auto start = std::chrono::steady_clock::now();
     for (int t = 0; t < mc_cycles; t++) {
         idx_p = rng->rand() % N;
         wf_old = wave_function(r[idx_p]);
@@ -47,8 +55,22 @@ void System::run_metropolis(double alpha_) {
 
     E /= (mc_cycles * (1.0 - equi_fraction));
     E2 /= (mc_cycles * (1.0 - equi_fraction));
+    
+    auto end = std::chrono::steady_clock::now();
+    double time =  (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9);
 
-    printf("alpha: %.2f; E: %3.6f; var: %4.6f \n", alpha, E, E2 - E*E);
+    alphas.push_back(alpha);
+    energies.push_back(E);
+    energies2.push_back(E2);
+    variances.push_back(E2 - E*E);
+    wall_time_alpha.push_back(time);
+    wall_time += time;
+
+    printf("alpha: %.2f | E: %3.6f | var: %4.6f | time: %fs \n", 
+                alphas.back(), 
+                energies.back(), 
+                variances.back(), 
+                wall_time_alpha.back());
 }
 
 long double System::local_energy() {
@@ -106,6 +128,26 @@ void System::set_simulation_params(long mc_cycles_, double equi_fraction_, doubl
     step_length = step_length_;
 
     set_params = true;
+}
+
+double System::get_wall_time() {
+    return wall_time;
+}
+
+void System::write_results(std::string name, std::string path) {
+    std::filesystem::create_directories(path); 
+
+    std::ofstream file1(path + name);
+    if (file1.is_open()) {
+        file1 << "alpha,energy,energy2,variance,wall_time\n";
+        for (int i = 0; i < alphas.size(); i++) {
+            file1 << std::setprecision(10);
+            file1 << alphas.at(i) << "," << energies.at(i) << "," << energies2.at(i) << "," << variances.at(i) << "," << wall_time_alpha.at(i) << "\n";
+        }
+        file1.close();
+    } else {
+        printf(" -- Error: can not open save file, please check you directory -- \n");
+    }
 }
 
 System::~System() {
