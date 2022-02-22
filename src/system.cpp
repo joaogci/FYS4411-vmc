@@ -21,7 +21,6 @@ void System::run_metropolis(double alpha_) {
     long double E = 0, E2 = 0;
 
     alpha = alpha_;
-    int counter = 0;
     
     for (int t = 0; t < mc_cycles; t++) {
         idx_p = rng->rand() % N;
