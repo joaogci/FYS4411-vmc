@@ -1,37 +1,42 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+#include <cmath>
+
 #include "rng.h"
-#include "sampler.h"
-#include "wave_functions/wave_function.h"
 
 class System {
 private:
     int N;                  // Number of particles
     int dim;                // Number of dimentions
-    long mc_cycles;         // Number of Monte Carlo (MC) cyles
-    double equi_fraction;   // Fraction of MC cycles used to achieve the equilibrium regime
-    double step_length;     // Step length for MC update
     double alpha;           // Variational parameter
     
-    long double **r;        // N * dim array that contains the position of all particles
+    long mc_cycles = 1000000L;         // Number of Monte Carlo (MC) cyles
+    double equi_fraction = 0.3;   // Fraction of MC cycles used to achieve the equilibrium regime
+    double step_length = 0.5;     // Step length for MC update
+    
+    double omega_ho = 1;        // Frequency of the HO 
+    
+    long double **r;        // (N * dim) array that contains the position of all particles
 
     RNG *rng;               // Random Number Generator
-    Sampler *sampler;       // Class Sampler instance
-    WaveFunction *wf;       // Trial WaveFunction for the system
-    
 
     bool r_allocated = false;
     bool set_params = false;
+    bool set_hamiltonian = false;
 
 public:
     System();
     System(unsigned int seed);
     ~System();
 
-    void init_particles(int N, int dim, double alpha);
-    void set_simulation_params(long mc_cycles, double equi_fraction, double step_length);
-
+    void init_particles(int N_, int dim_);
+    void set_simulation_params(long mc_cycles_, double equi_fraction_, double step_length_);
+    void init_hamiltonian(double omega_ho_);
+    long double local_energy();
+    long double wave_function();
+    long double wave_function(long double *r_i);
+    void run_metropolis(double alpha_);
 };
 
 #endif // SYSTEM_H
