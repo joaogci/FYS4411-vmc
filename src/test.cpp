@@ -12,6 +12,9 @@ int main(int argc, char **argv) {
     for (double alpha = 0.1; alpha <= 1.0; alpha += 0.1) {
         ind_ho.run_metropolis(alpha);
     }
+    ind_ho.write_results("res.csv", "./");
+
+    printf("Total Wall Time: %fs \n", ind_ho.get_wall_time());
 
     return 0;
 }
