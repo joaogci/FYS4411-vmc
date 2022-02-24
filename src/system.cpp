@@ -101,7 +101,7 @@ long double System::greens_function(long double *r_new, long double *r_old) {
     long double gf = 0;
 
     for (int d = 0; d < dim; d++) {
-        gf += 0.5 * (quantum_force(r_new[d]) - quantum_force(r_old[d])) * 
+        gf += 0.5 * (quantum_force(r_new[d]) + quantum_force(r_old[d])) * 
         (r_old[d] - r_new[d] + 0.5 * D * dt * (quantum_force(r_old[d] - quantum_force(r_new[d]))));
     }
 
