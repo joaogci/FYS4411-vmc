@@ -66,7 +66,7 @@ void System::run_metropolis(double alpha_) {
     wall_time_alpha.push_back(time);
     wall_time += time;
 
-    printf("alpha: %.2f | E: %3.6lf | var: %4.6lf | time: %fs \n", 
+    printf("alpha: %.2f | E: %3.6Lf | var: %4.6Lf | time: %fs \n", 
                 alphas.back(), 
                 energies.back(), 
                 variances.back(), 
