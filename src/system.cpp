@@ -99,12 +99,15 @@ long double System::quantum_force(long double r) {
 
 long double System::greens_function(long double *r_new, long double *r_old) {
     long double gf = 0;
+    // for (int d = 0; d < dim; d++) {
+    //     gf += - pow(r_old[d] - r_new[d] - dt * D * quantum_force(r_new[d]), 2) +
+    //             pow(r_new[d] - r_old[d] - dt * D * quantum_force(r_old[d]), 2);
+    // }
 
     for (int d = 0; d < dim; d++) {
-        gf += 0.5 * (quantum_force(r_new[d]) + quantum_force(r_old[d])) * 
-        (r_old[d] - r_new[d] + 0.5 * D * dt * (quantum_force(r_old[d] - quantum_force(r_new[d]))));
+        gf += 0.5 * (quantum_force(r_new[d]) + quantum_force(r_old[d])) *
+        (r_old[d] - r_new[d] + 0.5 * D * dt * (quantum_force(r_old[d]) - quantum_force(r_new[d])));
     }
-
     return exp(gf);
 }
 
