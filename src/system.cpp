@@ -39,7 +39,7 @@ void System::run_metropolis(double alpha_) {
         }
         wf_new = wave_function(r_new);
 
-        ratio = (wf_new*wf_new) / (wf_old*wf_old);
+        ratio = greens_function(r_new, r[idx_p]) * (wf_new*wf_new) / (wf_old*wf_old);
         if (ratio >= 1 || rng->rand_uniform() <= ratio) {
             for (d = 0; d < dim; d++) {
                 r[idx_p][d] = r_new[d];
@@ -91,6 +91,21 @@ long double System::wave_function() {
         }
     }
     return exp(- alpha * r2_sum);
+}
+
+long double System::quantum_force(long double r) {
+    return - 4 * alpha * r; 
+}
+
+long double System::greens_function(long double *r_new, long double *r_old) {
+    long double gf = 0;
+
+    for (int d = 0; d < dim; d++) {
+        gf += 0.5 * (quantum_force(r_new[d]) - quantum_force(r_old[d])) * 
+        (r_old[d] - r_new[d] + 0.5 * D * dt * (quantum_force(r_old[d] - quantum_force(r_new[d]))));
+    }
+
+    return exp(gf);
 }
 
 long double System::wave_function(long double *r_i) {
