@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <random>
 
 #include "rng.h"
 
@@ -15,7 +16,7 @@ private:
     long mc_cycles = 1000000L;         // Number of Monte Carlo (MC) cyles
     double equi_fraction = 0.3;   // Fraction of MC cycles used to achieve the equilibrium regime
     double step_length = 0.5;     // Step length for MC update
-    double dt = 0.01;
+    double dt = 0.1;
     double D = 0.5;
     
     double omega_ho = 1;        // Frequency of the HO 

@@ -35,10 +35,12 @@ void System::run_metropolis(double alpha_) {
         wf_old = wave_function(r[idx_p]);
 
         for (d = 0; d < dim; d++) {
-            r_new[d] = r[idx_p][d] + step_length * (rng->rand_uniform() - 0.5);
+            // r_new[d] = r[idx_p][d] + step_length * (rng->rand_uniform() - 0.5);
+            r_new[d] = r[idx_p][d] + D * quantum_force(r[idx_p][d]) * dt + sqrt(dt) * rng->rand_normal();
         }
         wf_new = wave_function(r_new);
 
+        ratio = (wf_new*wf_new) / (wf_old*wf_old);
         ratio = greens_function(r_new, r[idx_p]) * (wf_new*wf_new) / (wf_old*wf_old);
         if (ratio >= 1 || rng->rand_uniform() <= ratio) {
             for (d = 0; d < dim; d++) {
