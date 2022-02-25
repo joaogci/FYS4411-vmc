@@ -46,6 +46,7 @@ class RNG {
         }
 
         long double rand_normal() {
+            // http://dspguide.com/ch2/6.htm
             return sqrt(- 2 * log(rand_uniform())) * cos(2 * M_PI * rand_uniform());
         } 
 };
