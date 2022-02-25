@@ -3,6 +3,7 @@
 #define RNG_H
 
 #include <stdint.h>
+#include <cmath>
 
 class RNG {
     private:
@@ -43,6 +44,10 @@ class RNG {
             this->s[3] = this->rotl(this->s[3], 45);
             return result;
         }
+
+        long double rand_normal() {
+            return sqrt(- 2 * log(rand_uniform())) * cos(2 * M_PI * rand_uniform());
+        } 
 };
 
 #endif
