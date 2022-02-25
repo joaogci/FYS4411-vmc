@@ -36,6 +36,12 @@ private:
     std::vector<double> wall_time_alpha;
     double wall_time = 0;
 
+    long double local_energy();
+    long double wave_function();
+    long double wave_function(long double *r_i);
+    long double greens_function(long double *r_new, long double *r_old);
+    long double quantum_force(long double r);
+
 public:
     System();
     System(unsigned int seed);
@@ -47,14 +53,7 @@ public:
     void init_particles(int N_, int dim_);
     void set_simulation_params(long mc_cycles_, double equi_fraction_, double step_length_);
     void init_hamiltonian(double omega_ho_);
-    long double local_energy();
-    long double wave_function();
-    long double wave_function(long double *r_i);
     void run_metropolis(double alpha_);
-
-    long double greens_function(long double *r_new, long double *r_old);
-    long double quantum_force(long double r);
-
 };
 
 #endif // SYSTEM_H
