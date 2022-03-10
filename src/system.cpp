@@ -28,7 +28,7 @@ void System::run_metropolis(double alpha_) {
     long double E = 0, E2 = 0;
 
     alpha = alpha_;
-    
+
     auto start = std::chrono::steady_clock::now();
     for (int t = 0; t < mc_cycles; t++) {
         idx_p = rng->rand() % N;
@@ -47,7 +47,7 @@ void System::run_metropolis(double alpha_) {
                 r[idx_p][d] = r_new[d];
             }
         }
-        
+
         if (t >= mc_cycles * equi_fraction) {
             E_l = local_energy();
             E += E_l;
@@ -57,7 +57,7 @@ void System::run_metropolis(double alpha_) {
 
     E /= (mc_cycles * (1.0 - equi_fraction));
     E2 /= (mc_cycles * (1.0 - equi_fraction));
-    
+
     auto end = std::chrono::steady_clock::now();
     double time =  (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9);
 
@@ -68,11 +68,32 @@ void System::run_metropolis(double alpha_) {
     wall_time_alpha.push_back(time);
     wall_time += time;
 
-    printf("alpha: %.2f | E: %3.6Lf | var: %4.6Lf | time: %fs \n", 
-                alphas.back(), 
-                energies.back(), 
-                variances.back(), 
+    printf("alpha: %.2f | E: %3.6Lf | var: %4.6Lf | time: %fs \n",
+                alphas.back(),
+                energies.back(),
+                variances.back(),
                 wall_time_alpha.back());
+}
+
+void System::optimize_alpha(double alpha_0_, double eta_, double epsilon_, double h_, long mc_cycles_) {
+    set_simulation_params(mc_cycles_, equi_fraction, step_length);
+
+    double derivative = epsilon_ + 1;
+    double Ep, Em;
+    opt_alpha = alpha_0_;
+
+    while (sqrt(derivative * derivative) >= epsilon_) {
+        run_metropolis(opt_alpha + h_);
+        Ep = energies.back();
+        run_metropolis(opt_alpha - h_);
+        Em = energies.back();
+
+        derivative = (Ep - Em) / (2.0 * h_);
+        printf("%f \n", derivative);
+        opt_alpha += - eta_ * derivative;
+    }
+
+    printf("optimal alpha -> %f \n", opt_alpha);
 }
 
 long double System::local_energy() {
@@ -96,7 +117,7 @@ long double System::wave_function() {
 }
 
 long double System::quantum_force(long double r) {
-    return - 4 * alpha * r; 
+    return - 4 * alpha * r;
 }
 
 long double System::greens_function(long double *r_new, long double *r_old) {
@@ -155,7 +176,7 @@ double System::get_wall_time() {
 }
 
 void System::write_results(std::string name, std::string path) {
-    std::filesystem::create_directories(path); 
+    std::filesystem::create_directories(path);
 
     std::ofstream file1(path + name);
     if (file1.is_open()) {
@@ -181,4 +202,3 @@ System::~System() {
         delete[] r;
     }
 }
-

@@ -12,6 +12,7 @@ private:
     int N;                  // Number of particles
     int dim;                // Number of dimentions
     double alpha;           // Variational parameter
+    double opt_alpha;       // Optimal alpha value after optimization
     
     long mc_cycles = 1000000L;         // Number of Monte Carlo (MC) cyles
     double equi_fraction = 0.3;   // Fraction of MC cycles used to achieve the equilibrium regime
@@ -54,6 +55,7 @@ public:
     void set_simulation_params(long mc_cycles_, double equi_fraction_, double step_length_);
     void init_hamiltonian(double omega_ho_);
     void run_metropolis(double alpha_);
+    void optimize_alpha(double alpha_0_, double epsilon_, double eta_, double h_, long mc_cycles_);
 };
 
 #endif // SYSTEM_H
