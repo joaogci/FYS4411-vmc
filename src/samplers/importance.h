@@ -12,7 +12,7 @@ private:
 
 public:
 
-    Importance(long mc_cycles_, double equi_fraction_, System* system_, RNG *rng_) : MonteCarlo(mc_cycles_, equi_fraction_, system_, rng_) {}
+    Importance(System* system_, RNG *rng_) : MonteCarlo(system_, rng_) {}
 
     long double acceptence_ratio(long double *r_new, long double *r_old) {
         long double wf_new = system->evaluate_wf(r_new);

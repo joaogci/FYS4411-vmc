@@ -10,7 +10,7 @@ private:
 
 public:
 
-    Metropolis(long mc_cycles_, double equi_fraction_, System *system_, double step_length_, RNG *rng_) : MonteCarlo(mc_cycles_, equi_fraction_, system_, rng_) {
+    Metropolis(System *system_, double step_length_, RNG *rng_) : MonteCarlo(system_, rng_) {
         step_length = step_length_;
     }
 
