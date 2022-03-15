@@ -45,6 +45,10 @@ public:
         alpha = alpha_;
     }
 
+    int get_N() {
+        return N;
+    }
+
     int get_dim() {
         return dim;
     }
