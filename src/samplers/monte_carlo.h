@@ -24,7 +24,7 @@ public:
     ~MonteCarlo() {}
 
     long double acceptence_ratio(long double *r_new, long double *r_old);
-    void update_system();
+    void update_system(long double *r_new, long double *r_old);
 
 };
 
