@@ -20,6 +20,38 @@ private:
     long mc_cycles;
     double equi_fraction;
     double measure_after;
+    long measure_cycles;
+
+    double eta = 1e-4;
+    double tol = 1;
+    double h = 1e-3;
+
+    double solve_optimizer(double alpha_) {
+        int N = system->get_N();
+        int dim = system->get_dim();
+        int idx_p;
+        long double r_new[dim];
+        long double ratio;
+
+        long double E = 0;
+
+        system->set_var_params(alpha_);
+
+        for (int t = 0; t < mc_cycles; t++) {
+            idx_p = rng->rand() % N;
+
+            ratio = mc_sampler->step(r_new, system->get_rk(idx_p));
+            if (ratio >= 1 || rng->rand_uniform() <= ratio) {
+                system->update_rk(idx_p, r_new);
+            }
+
+            if(t >= measure_after) {
+                E += system->local_energy();
+            }
+        }
+
+        return E / measure_cycles;
+    }
 
 public:
 
@@ -34,12 +66,19 @@ public:
         mc_cycles = mc_cycles_;
         equi_fraction = equi_fraction_;
         measure_after = mc_cycles * equi_fraction;
+        measure_cycles = mc_cycles * (1.0 - equi_fraction);
     }
 
     ~Solver() {
         delete rng;
         delete system;
         delete mc_sampler;
+    }
+
+    void set_solve_params(long mc_cycles_, double equi_fraction_) {
+        mc_cycles = mc_cycles_;
+        equi_fraction = equi_fraction_;
+        measure_after = mc_cycles * equi_fraction;
     }
 
     void solve(double alpha_) {
@@ -68,13 +107,40 @@ public:
             }
         }
 
-        E /= (mc_cycles * (1.0 - equi_fraction));
-        E2 /= (mc_cycles * (1.0 - equi_fraction));
+        E /= measure_cycles;
+        E2 /= measure_cycles;
 
-        printf("Energy: %lf for alpha=%f \n", E, alpha_);
+        // printf("Energy: %lf for alpha=%f \n", E, alpha_);
     }
-    
-    void optimize_var_params();
+
+    void set_optimization_params(double eta_, double tol_, double h_, long mc_cycles_, double equi_fraction_) {
+        mc_cycles = mc_cycles_;
+        equi_fraction = equi_fraction_;
+        measure_after = mc_cycles * equi_fraction;
+        measure_cycles = mc_cycles * (1.0 - equi_fraction); 
+
+        eta = eta_;
+        tol = tol_;
+        h = h_;
+    } 
+
+    double optimize_var_params(double alpha_0_) {
+        double opt_alpha = alpha_0_;
+        long double derivative = tol + 1;
+        long double Ep, Em;
+
+
+        while (fabs(derivative) >= tol) {
+            Ep = solve_optimizer(opt_alpha + h);
+            Em = solve_optimizer(opt_alpha - h);
+
+            derivative = (Ep - Em) / (2.0 * h);
+            opt_alpha += - eta * derivative;
+            printf("opt_alpha = %f derivative %f \n", opt_alpha, derivative);
+        }
+
+        return opt_alpha;
+    }
 
     void write_results();
     

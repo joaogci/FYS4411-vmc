@@ -8,9 +8,12 @@ int main() {
     
     Solver solver(ind_ho, met_sampler, (long) 1e5, 0.3, 2022);
 
-    for (double alpha = 0.1; alpha <= 1.0; alpha+=0.1) {
-        solver.solve(alpha);
-    }
+    solver.set_optimization_params(1e-4, 1, 1e-3, 100000, 0.3);
+    printf("opt_alpha = %f \n", solver.optimize_var_params(0.1));
+
+    // for (double alpha = 0.1; alpha <= 1.0; alpha+=0.1) {
+    //     solver.solve(alpha);
+    // }
 
     return 0;
 }
