@@ -4,24 +4,20 @@
 #include "monte_carlo.h"
 
 class Importance : public MonteCarlo {
-private:
+protected:
 
     double D = 0.5;
     double dt = 0.001;
     double sqrt_dt = sqrt(dt);
 
-public:
-
-    Importance(System* system_, RNG *rng_) : MonteCarlo(system_, rng_) {}
-
-    long double acceptence_ratio(long double *r_new, long double *r_old) {
+    virtual long double acceptence_ratio(long double *r_new, long double *r_old) {
         long double wf_new = system->evaluate_wf(r_new);
         long double wf_old = system->evaluate_wf(r_old);
 
         return greens_function(r_new, r_old) * SQUARE(wf_new) / SQUARE(wf_old);
     }
 
-    void update_system(long double *r_new, long double *r_old) {
+    virtual void update_system(long double *r_new, long double *r_old) {
         int dim = system->get_dim();
         long double q_force[dim];
         system->quantum_force(q_force, r_old);
@@ -47,6 +43,9 @@ public:
         return exp(gf);
     }
 
+public:
+
+    Importance() : MonteCarlo() {}
 
 };
 

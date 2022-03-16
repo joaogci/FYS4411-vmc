@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#define SQUARE(x)   x * x
+#define SQUARE(x)   (x * x)
 
 class System {
 protected:
@@ -53,13 +53,23 @@ public:
         return dim;
     }
 
-    long double evaluate_wf(long double *r);
-    void gradient_wf(long double *grad, long double *r);
-    long double gradient_component_wf(long double x);
-    long double laplacian_wf(long double *r);
+    long double *get_rk(int k) {
+        return r[k];
+    }
+
+    void update_rk(int k, long double *r_new) {
+        for (int d = 0; d < dim; d++) {
+            r[k][d] = r_new[d];
+        }
+    }
+
+    virtual long double evaluate_wf(long double *r) = 0;
+    virtual void gradient_wf(long double *grad, long double *r) = 0;
+    virtual long double gradient_component_wf(long double x) = 0;
+    virtual long double laplacian_wf(long double *r) = 0;
     
-    void quantum_force(long double *force, long double *r);
-    long double local_energy();
+    virtual void quantum_force(long double *force, long double *r) = 0;
+    virtual long double local_energy() = 0;
 
 };
 

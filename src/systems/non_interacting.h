@@ -8,7 +8,7 @@ public:
 
     NonInteracting(int N_, int dim_, double omega_) : System(N_, dim_, omega_) {}
 
-    long double evaluate_wf(long double *r) {
+    virtual long double evaluate_wf(long double *r) {
         double r2_sum = 0;
         for (int d = 0; d < dim; ++d) {
             r2_sum += SQUARE(r[d]);
@@ -17,17 +17,17 @@ public:
         return exp(- alpha * r2_sum);
     }
 
-    long double gradient_component_wf(long double x) {
+    virtual long double gradient_component_wf(long double x) {
         return -2 * alpha * x;
     }
 
-    void gradient_wf(long double *grad, long double *r) {
+    virtual void gradient_wf(long double *grad, long double *r) {
         for (int d = 0; d < dim; d++) {
             grad[d] = -2 * alpha * r[d];
         }
     }
 
-    long double laplacian_wf(long double *r) {
+    virtual long double laplacian_wf(long double *r) {
         double r2_sum = 0;
         for (int d = 0; d < dim; ++d) {
             r2_sum += SQUARE(r[d]);
@@ -36,13 +36,13 @@ public:
         return 4 * SQUARE(alpha) * r2_sum - 2 * alpha * dim;
     }
 
-    void quantum_force(long double *force, long double *r) {
+    virtual void quantum_force(long double *force, long double *r) {
         for (int d = 0; d < dim; d++) {
             force[d] = - 4 * alpha * r[d];
         }
     }
 
-    long double local_energy() {
+    virtual long double local_energy() {
         double r2_sum = 0;
         for (int i = 0; i < N; ++i) {
             for (int d = 0; d < dim; ++d) {
