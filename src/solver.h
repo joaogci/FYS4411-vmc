@@ -20,7 +20,7 @@ private:
     long mc_cycles;
     double equi_fraction;
     double measure_after;
-    long measure_cycles;
+    double measure_cycles;
 
     double eta = 1e-4;
     double tol = 1;
@@ -79,6 +79,7 @@ public:
         mc_cycles = mc_cycles_;
         equi_fraction = equi_fraction_;
         measure_after = mc_cycles * equi_fraction;
+        measure_cycles = mc_cycles * (1.0 - equi_fraction);
     }
 
     void solve(double alpha_) {
@@ -110,7 +111,7 @@ public:
         E /= measure_cycles;
         E2 /= measure_cycles;
 
-        // printf("Energy: %lf for alpha=%f \n", E, alpha_);
+        printf("Energy: %lf for alpha=%f \n", E, alpha_);
     }
 
     void set_optimization_params(double eta_, double tol_, double h_, long mc_cycles_, double equi_fraction_) {
@@ -136,7 +137,6 @@ public:
 
             derivative = (Ep - Em) / (2.0 * h);
             opt_alpha += - eta * derivative;
-            printf("opt_alpha = %f derivative %f \n", opt_alpha, derivative);
         }
 
         return opt_alpha;
