@@ -27,7 +27,7 @@ public:
         }
     }
 
-    virtual long double laplacian_wf(long double *r) {
+    virtual long double laplacian_wf(long double *rk, int k) {
         double r2_sum = 0;
         for (int d = 0; d < dim; ++d) {
             r2_sum += SQUARE(r[d]);

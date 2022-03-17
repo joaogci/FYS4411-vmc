@@ -6,9 +6,9 @@
 class Interacting : public System {
 private:
 
-    long double distance(long double *rk, long double *rm) {
-        return sqrt(SQUARE(rk[0] - rm[0]) + SQUARE(rk[1] - rm[1]) + SQUARE(rk[2] - rm[2]));
-    }
+    //long double distance(long double *rk, long double *rm) {
+    //    return sqrt(SQUARE(rk[0] - rm[0]) + SQUARE(rk[1] - rm[1]) + SQUARE(rk[2] - rm[2]));
+    //}
 
 public:
 
@@ -28,15 +28,70 @@ public:
     }
 
     virtual void gradient_wf(long double *grad, long double *rk) {
-    }
+        long double rkm, denom;
 
-    virtual long double laplacian_wf(long double *r) {
-        double r2_sum = 0;
-        for (int d = 0; d < dim; ++d) {
-            r2_sum += SQUARE(r[d]);
+        for (int d=0; d<dim; ++d){
+            if (d<2){
+                grad[d] = -2*alpha*rk[d];// + (d/(dim-1))*-2*alpha*beta*rk[d] <- Branchless programming attempt
+            } else {
+                grad[d] = -2*alpha*beta*rk[d];
+            }
+            for (m=0; m<N; ++m){
+                if (m != k){
+                    rkm = DIST(rk, r[m]);
+                    denom = SQUARE(rkm) * (rkm - a);
+                    grad[d] += (rk[d] - r[m][d]) * (a/denom);
+                }
+            }
         }
 
-        return 4 * SQUARE(alpha) * r2_sum - 2 * alpha * dim;
+    }
+
+    virtual long double laplacian_wf(long double *rk, int k) {
+
+        long double line1 = -2*alpha*(d-1+beta) + 4*SQUARE(alpha) * (r[0]*r[0] + r[1]*r[1] + beta*r[2]*r[2]);
+        long double sum1 = 0.0;
+        long double sum2 = 0.0;
+        long double sum3 = 0.0;
+
+        long double rkm, rkn, rkm2, rkn2, denom1, denom2;
+
+        for (int m=0; m<N; ++m)                                             {// Whitespace is a little bitch, @ me
+            if (m != k){
+                rkm = DIST(rk, r[m]);
+                rkm2 = SQUARE(rkm);
+                denom1 = rkm2*(rkm - a);
+                sum1 += (rk[0]*(rk[0] - r[m][0]) + rk[1]*(rk[1] - r[m][1]) + rk[2]*(rk[2] - r[m][2]))/(demon1);
+                sum2 += ((d-1)*a)/(demon1) + (a*a - 2*a*rkm)/(demon1 * (rkm - a));
+            }
+        }  
+
+        long double line2 = -4*alpha*a *sum1;
+        long double line3 = sum2;
+
+        for (int m=0; m<N; ++m){
+            for (int n=0; n<N; ++n) {
+                if (m != k && n != k){
+                    rk_rm = (rk[0] - r[m][0]) * (rk[0] - r[n][0])
+                    + (rk[1] - r[m][1]) * (rk[1] - r[n][1])
+                    + (rk[2] - r[m][2]) * (rk[2] - r[m][2]);
+
+                    rkm = DIST(rk, r[m]);
+                    rkm2 = SQUARE(rkm);
+
+                    rkn = DIST(rk, r[n]);
+                    rkn2 = SQUARE(rkn);
+
+                    denom1 = rkm2 * (rkm - a);
+                    denom2 = rkn2 * (rkn - a);
+                    sum3 += rk_rm / (denom1 * denom2);
+                }
+            }
+        }
+
+        long double line4 = SQUARE(a) * sum3;
+
+        return line1 + line2 + line3 + line4;
     }
 
     virtual void quantum_force(long double *force, long double *r) {

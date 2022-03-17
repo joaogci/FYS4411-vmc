@@ -3,17 +3,18 @@
 
 #include <cmath>
 
-#define SQUARE(x)   (x * x)
+#define SQUARE(x)       (x * x)
+#define DIST(rk, rm)    (sqrt(SQUARE(rk[0] - rm[0]) + SQUARE(rk[1] - rm[1]) + SQUARE(rk[2] - rm[2])))
 
 class System {
 protected:
     int N;
     int dim;
 
-    double a = 0.0;         // Hard sphere radius
+    double a = 0.0;      // Hard sphere radius
     double omega;
-    double alpha = 0.0;     // Variational parameter
-    double beta = 1.0;      // Another "Variational Parameter, that doesn't vary"
+    double alpha = 0.0;       // Variational parameter
+    double beta = 1.0;
 
     long double **r;        // Positions vector
 
@@ -67,7 +68,7 @@ public:
     virtual long double evaluate_wf(long double *r) = 0;
     virtual void gradient_wf(long double *grad, long double *r) = 0;
     virtual long double gradient_component_wf(long double x) = 0;
-    virtual long double laplacian_wf(long double *r) = 0;
+    virtual long double laplacian_wf(long double *rk, int k) = 0;
     
     virtual void quantum_force(long double *force, long double *r) = 0;
     virtual long double local_energy() = 0;
