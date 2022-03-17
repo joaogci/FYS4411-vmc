@@ -36,7 +36,7 @@ public:
             } else {
                 grad[d] = -2*alpha*beta*rk[d];
             }
-            for (m=0; m<N; ++m){
+            for (int m=0; m<N; ++m){
                 if (m != k){
                     rkm = DIST(rk, r[m]);
                     denom = SQUARE(rkm) * (rkm - a);
@@ -49,7 +49,7 @@ public:
 
     virtual long double laplacian_wf(long double *rk, int k) {
 
-        long double line1 = -2*alpha*(d-1+beta) + 4*SQUARE(alpha) * (r[0]*r[0] + r[1]*r[1] + beta*r[2]*r[2]);
+        long double line1 = -2*alpha*(d-1+beta) + 4*SQUARE(alpha) * (rk[0]*rk[0] + rk[1]*rk[1] + beta*rk[2]*rk[2]);
         long double sum1 = 0.0;
         long double sum2 = 0.0;
         long double sum3 = 0.0;
@@ -61,8 +61,8 @@ public:
                 rkm = DIST(rk, r[m]);
                 rkm2 = SQUARE(rkm);
                 denom1 = rkm2*(rkm - a);
-                sum1 += (rk[0]*(rk[0] - r[m][0]) + rk[1]*(rk[1] - r[m][1]) + rk[2]*(rk[2] - r[m][2]))/(demon1);
-                sum2 += ((d-1)*a)/(demon1) + (a*a - 2*a*rkm)/(demon1 * (rkm - a));
+                sum1 += (rk[0]*(rk[0] - r[m][0]) + rk[1]*(rk[1] - r[m][1]) + rk[2]*(rk[2] - r[m][2]))/(denom1);
+                sum2 += ((d-1)*a)/(denom1) + (a*a - 2*a*rkm)/(denom1 * (rkm - a));
             }
         }  
 
