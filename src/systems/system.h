@@ -10,9 +10,10 @@ protected:
     int N;
     int dim;
 
-    // double a = 0.0;      // Hard sphere radius
+    double a = 0.0;         // Hard sphere radius
     double omega;
-    double alpha = 0;       // Variational parameter
+    double alpha = 0.0;     // Variational parameter
+    double beta = 1.0;      // Another "Variational Parameter, that doesn't vary"
 
     long double **r;        // Positions vector
 
