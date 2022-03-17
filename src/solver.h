@@ -29,7 +29,7 @@ private:
     long measure_cycles;
 
     double eta = 1e-4;
-    double tol = 1;
+    double tol = 1e-6;
     double h = 1e-3;
 
     double solve_optimizer(double alpha_) {
@@ -169,8 +169,8 @@ public:
             Ep = solve_optimizer(opt_alpha + h);
             Em = solve_optimizer(opt_alpha - h);
 
-            derivative = (Ep - Em) / (2.0 * h);
-            opt_alpha += - eta * derivative;
+            derivative = eta * (Ep - Em) / (2.0 * h);
+            opt_alpha += - derivative;
 
             if (count % 10 == 0) {
                 printf("iter: %5li | alpha: %.4f | derivative: %6.5Lf \n", count, opt_alpha, derivative);
