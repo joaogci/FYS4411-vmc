@@ -30,7 +30,7 @@ public:
     virtual long double laplacian_wf(long double *rk, int k) {
         double r2_sum = 0;
         for (int d = 0; d < dim; ++d) {
-            r2_sum += SQUARE(r[d]);
+            r2_sum += SQUARE(rk[d]);
         }
 
         return 4 * SQUARE(alpha) * r2_sum - 2 * alpha * dim;

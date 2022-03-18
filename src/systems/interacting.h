@@ -4,12 +4,6 @@
 #include "system.h"
 
 class Interacting : public System {
-private:
-
-    //long double distance(long double *rk, long double *rm) {
-    //    return sqrt(SQUARE(rk[0] - rm[0]) + SQUARE(rk[1] - rm[1]) + SQUARE(rk[2] - rm[2]));
-    //}
-
 public:
 
     Interacting(int N_, int dim_, double omega_) : System(N_, dim_, omega_) {}
@@ -49,7 +43,7 @@ public:
 
     virtual long double laplacian_wf(long double *rk, int k) {
 
-        long double line1 = -2*alpha*(d-1+beta) + 4*SQUARE(alpha) * (rk[0]*rk[0] + rk[1]*rk[1] + beta*rk[2]*rk[2]);
+        long double line1 = -2*alpha*(dim-1+beta) + 4*SQUARE(alpha) * (rk[0]*rk[0] + rk[1]*rk[1] + beta*rk[2]*rk[2]);
         long double sum1 = 0.0;
         long double sum2 = 0.0;
         long double sum3 = 0.0;
@@ -68,6 +62,7 @@ public:
 
         long double line2 = -4*alpha*a *sum1;
         long double line3 = sum2;
+        long double rk_rm;
 
         for (int m=0; m<N; ++m){
             for (int n=0; n<N; ++n) {
