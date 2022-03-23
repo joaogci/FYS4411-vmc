@@ -3,6 +3,7 @@
 .vscode
 ./morten_code
 morten_code
+initial_tests
 
 # Prerequisites
 *.d
