@@ -10,8 +10,12 @@ public:
 
     Interacting(int N_, int dim_, double omega_, double a_) : System(N_, dim_, omega_, a_) {} 
 
+    virtual void print_info() {
+        printf("Interacting Bosons -> N: %d | d: %d | omega: %.3lf | omega_z: %.3f | a: %.6lf \n", N, dim, omega, beta, a);
+    }
+
     virtual long double evaluate_wf(long double *rk, int k) {
-        long double wf, sing_part, jastrow;
+        long double sing_part, jastrow;
         long double dist;
         double r2_sum = 0;
 

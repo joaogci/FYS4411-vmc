@@ -22,11 +22,13 @@ private:
     long double *E_sampled = NULL;
     long double *E2_sampled = NULL;
     long double run_time = 0;
+    long accepted_ratio;
 
     long mc_cycles;
     double equi_fraction;
     double measure_after;
     long measure_cycles;
+    int print_skip;
 
     double eta = 1e-4;
     double tol = 1e-6;
@@ -89,6 +91,7 @@ public:
         equi_fraction = equi_fraction_;
         measure_after = mc_cycles * equi_fraction;
         measure_cycles = mc_cycles * (1.0 - equi_fraction);
+        print_skip = mc_cycles / 2;
 
         if (E_sampled != NULL) {
             delete[] E_sampled;
@@ -97,8 +100,8 @@ public:
             delete[] E2_sampled;
         }
 
-        E_sampled = new long double[measure_cycles];
-        E2_sampled = new long double[measure_cycles];
+        E_sampled = new long double[mc_cycles];
+        E2_sampled = new long double[mc_cycles];
     }
 
     void solve(double alpha_) {
@@ -107,12 +110,13 @@ public:
         long double ratio;
 
         long double E_l, E = 0, E2 = 0;
-        long count = 0;
 
         alpha = alpha_;
         system->set_var_params(alpha);
 
-        printf("Starting VMC calculation with \nalpha: %.4f | mc_cycles: 2^%i | measure_after: 2^%i \n\n", alpha, (int) log2(mc_cycles), (int) log2(measure_after));
+        printf("Starting VMC calculation with \nalpha: %.4f | mc_cycles: 2^%i | measure_after: 2^%i \n", alpha, (int) log2(mc_cycles), (int) log2(measure_after));
+        system->print_info();
+        printf("\n");
 
         auto start = std::chrono::steady_clock::now();
         for (int t = 0; t < mc_cycles; t++) {
@@ -123,16 +127,22 @@ public:
                 for (int d = 0; d < system->dim; d++) {
                     system->r[idx_p][d] = r_new[d];
                 }
+                accepted_ratio++;
             }
 
+            E_l = system->local_energy();
+            E_sampled[t] = E_l;
+            E2_sampled[t] = E_l * E_l;
+
             if(t >= measure_after) {
-                E_l = system->local_energy();
                 E += E_l;
                 E2 += E_l * E_l;
+            }
 
-                E_sampled[count] = E_l;
-                E2_sampled[count] = E_l * E_l;
-                count++;
+            if (t == print_skip) {
+                auto end = std::chrono::steady_clock::now();
+                run_time =  (double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() * pow(10.0, -9);
+                printf("Half way through the computation in %Lfs \n", run_time);
             }
         }
         auto end = std::chrono::steady_clock::now();
@@ -140,8 +150,9 @@ public:
 
         E /= measure_cycles;
         E2 /= measure_cycles;
+        accepted_ratio /= mc_cycles;
 
-        printf("alpha: %.4f | E: %4.6Lf | var: %4.6Lf | time: %fs \n\n", alpha_, E, E2 - E*E, run_time);
+        printf("alpha: %.4f | E: %4.6Lf | var: %4.6Lf | time: %Lfs \n\n", alpha_, E, E2 - E*E, run_time);
     }
 
     void set_optimization_params(double eta_, double tol_, double h_, long mc_cycles_, double equi_fraction_) {
@@ -162,7 +173,9 @@ public:
 
         long count = 0;
 
-        printf("Starting optimization with \neta: %.7f | tol: %.6f | h: %.6f | mc_cycles 2^%i \n\n", eta, tol, h, (int) log2(mc_cycles));
+        printf("Starting optimization with \neta: %.7f | tol: %.6f | h: %.6f | mc_cycles 2^%i \n", eta, tol, h, (int) log2(mc_cycles));
+        system->print_info();
+        printf("\n");
 
         auto start = std::chrono::steady_clock::now();
         while (fabs(derivative) >= tol) {
@@ -173,7 +186,7 @@ public:
             opt_alpha += - derivative;
 
             if (count % 10 == 0) {
-                printf("iter: %5li | alpha: %.4f | derivative: %6.5Lf \n", count, opt_alpha, derivative);
+                printf("iter: %5li | alpha: %.4f | delta_alpha: %6.5Lf \n", count, opt_alpha, derivative);
             }
             count++;
         }
@@ -192,10 +205,10 @@ public:
         std::ofstream file1(file_loc);
         if (file1.is_open()) {
             file1 << std::setprecision(10);
-            file1 << "alpha,runtime\n";
-            file1 << alpha << "," << run_time << "\n";
+            file1 << "mc_cycles,measure_cycles,alpha,runtime,acceptance_ratio\n";
+            file1 << mc_cycles << "," << measure_cycles << "," << alpha << "," << run_time << "," << accepted_ratio << "\n";
             file1 << "energy,energy2\n";
-            for (int i = 0; i < measure_cycles; i++) {
+            for (int i = 0; i < mc_cycles; i++) {
                 file1 << E_sampled[i] << "," << E2_sampled[i] << "\n";
             }
             file1.close();

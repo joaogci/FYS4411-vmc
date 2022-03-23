@@ -8,6 +8,10 @@ public:
 
     NonInteracting(int N_, int dim_, double omega_) : System(N_, dim_, omega_) {}
 
+    virtual void print_info() {
+        printf("NonInteracting Bosons -> N: %d | d: %d | omega: %.3lf \n", N, dim, omega);
+    }
+
     virtual long double evaluate_wf(long double *rk, int k) {
         long double tmp[dim];
         for (int d = 0; d < dim; d++) {

@@ -83,6 +83,8 @@ public:
     
     virtual void quantum_force(long double *force, long double *rk, int k) = 0;
     virtual long double local_energy() = 0;
+    
+    virtual void print_info() = 0;
 
 };
 
