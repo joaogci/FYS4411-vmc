@@ -36,6 +36,8 @@ public:
         rng = rng_;
     }
 
+    virtual void print_info() = 0;
+
 };
 
 #endif // MONTE_CARLO_H

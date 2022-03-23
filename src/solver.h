@@ -22,7 +22,7 @@ private:
     long double *E_sampled = NULL;
     long double *E2_sampled = NULL;
     long double run_time = 0;
-    long accepted_ratio;
+    double accepted_ratio;
 
     long mc_cycles;
     double equi_fraction;
@@ -116,6 +116,7 @@ public:
 
         printf("Starting VMC calculation with \nalpha: %.4f | mc_cycles: 2^%i | measure_after: 2^%i \n", alpha, (int) log2(mc_cycles), (int) log2(measure_after));
         system->print_info();
+        mc_sampler->print_info();
         printf("\n");
 
         auto start = std::chrono::steady_clock::now();

@@ -30,6 +30,10 @@ public:
         step_length = step_length_;
     }
 
+    virtual void print_info() {
+        printf("Metropolis sampling -> step_length: %lf \n", step_length);
+    }
+
 };
 
 #endif // METROPOLIS_H

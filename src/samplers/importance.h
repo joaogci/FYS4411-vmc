@@ -47,7 +47,13 @@ private:
 
 public:
 
-    Importance() : MonteCarlo() {}
+    Importance(double dt_) : MonteCarlo() {
+        dt = dt_;
+    }
+
+    virtual void print_info() {
+        printf("Metropolis with importance sampling -> dt: %lf \n", dt);
+    }
 
 };
 
