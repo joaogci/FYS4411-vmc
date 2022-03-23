@@ -9,6 +9,7 @@
 
 #include "systems/system.h"
 #include "systems/non_interacting.h"
+#include "systems/interacting.h"
 
 #include "rng.h"
 

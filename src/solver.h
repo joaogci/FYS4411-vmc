@@ -33,10 +33,8 @@ private:
     double h = 1e-3;
 
     double solve_optimizer(double alpha_) {
-        int N = system->get_N();
-        int dim = system->get_dim();
         int idx_p;
-        long double r_new[dim];
+        long double r_new[system->dim];
         long double ratio;
 
         long double E = 0;
@@ -44,11 +42,13 @@ private:
         system->set_var_params(alpha_);
 
         for (int t = 0; t < mc_cycles; t++) {
-            idx_p = rng->rand() % N;
+            idx_p = rng->rand() % system->N;
 
-            ratio = mc_sampler->step(r_new, system->get_rk(idx_p));
+            ratio = mc_sampler->step(r_new, idx_p);
             if (ratio >= 1 || rng->rand_uniform() <= ratio) {
-                system->update_rk(idx_p, r_new);
+                for (int d = 0; d < system->dim; d++) {
+                    system->r[idx_p][d] = r_new[d];
+                }
             }
 
             if(t >= measure_after) {
@@ -102,10 +102,8 @@ public:
     }
 
     void solve(double alpha_) {
-        int N = system->get_N();
-        int dim = system->get_dim();
         int idx_p;
-        long double r_new[dim];
+        long double r_new[system->dim];
         long double ratio;
 
         long double E_l, E = 0, E2 = 0;
@@ -118,11 +116,13 @@ public:
 
         auto start = std::chrono::steady_clock::now();
         for (int t = 0; t < mc_cycles; t++) {
-            idx_p = rng->rand() % N;
+            idx_p = rng->rand() % system->N;
 
-            ratio = mc_sampler->step(r_new, system->get_rk(idx_p));
+            ratio = mc_sampler->step(r_new, idx_p);
             if (ratio >= 1 || rng->rand_uniform() <= ratio) {
-                system->update_rk(idx_p, r_new);
+                for (int d = 0; d < system->dim; d++) {
+                    system->r[idx_p][d] = r_new[d];
+                }
             }
 
             if(t >= measure_after) {

@@ -4,20 +4,23 @@
 #include "monte_carlo.h"
 
 class Metropolis : public MonteCarlo {
-protected: 
+private: 
 
     double step_length;
 
-    virtual long double acceptence_ratio(long double *r_new, long double *r_old) {
-        long double wf_new = system->evaluate_wf(r_new);
-        long double wf_old = system->evaluate_wf(r_old);
+    virtual long double acceptence_ratio(long double *r_new, int k) {
+        long double wf_new = system->evaluate_wf(r_new, k);
+        long double wf_old = system->evaluate_wf(system->r[k], k);
 
-        return SQUARE(wf_new) / SQUARE(wf_old);
+        if (wf_old) {
+            return SQUARE(wf_new) / SQUARE(wf_old);
+        }
+        return 0;
     }
 
-    virtual void update_system(long double *r_new, long double *r_old) {
-        for (int d = 0; d < system->get_dim(); d++) {
-            r_new[d] = r_old[d] + step_length * (rng->rand_uniform() - 0.5);
+    virtual void update_system(long double *r_new, int k) {
+        for (int d = 0; d < system->dim; d++) {
+            r_new[d] = system->r[k][d] + step_length * (rng->rand_uniform() - 0.5);
         }
     }
 

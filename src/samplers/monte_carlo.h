@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#define SQUARE(x)   (x * x)
+#define SQUARE(x)   ((x) * (x))
 
 class MonteCarlo {
 protected:
@@ -14,8 +14,8 @@ protected:
     System *system;
     RNG *rng;
 
-    virtual long double acceptence_ratio(long double *r_new, long double *r_old) = 0;
-    virtual void update_system(long double *r_new, long double *r_old) = 0;
+    virtual long double acceptence_ratio(long double *r_new, int k) = 0;
+    virtual void update_system(long double *r_new, int k) = 0;
     
 public:
 
@@ -23,9 +23,9 @@ public:
 
     ~MonteCarlo() {}
 
-    long double step(long double *r_new, long double *r_old) {
-        update_system(r_new, r_old);
-        return acceptence_ratio(r_new, r_old);
+    long double step(long double *r_new, int k) {
+        update_system(r_new, k);
+        return acceptence_ratio(r_new, k);
     }
 
     void set_system(System *system_) {
