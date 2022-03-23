@@ -37,6 +37,7 @@ public:
     }
 
     virtual void print_info() = 0;
+    virtual void set_param(double param_) = 0;
 
 };
 

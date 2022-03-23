@@ -55,6 +55,10 @@ public:
         printf("Metropolis with importance sampling -> dt: %lf \n", dt);
     }
 
+    virtual void set_param(double param_) {
+        dt = param_;
+    }
+
 };
 
 #endif // IMPORTANCE_H

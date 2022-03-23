@@ -34,6 +34,10 @@ public:
         printf("Metropolis sampling -> step_length: %lf \n", step_length);
     }
 
+    virtual void set_param(double param_) {
+        step_length = param_;
+    }
+
 };
 
 #endif // METROPOLIS_H
