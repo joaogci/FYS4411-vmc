@@ -8,6 +8,8 @@ public:
 
     Interacting(int N_, int dim_, double omega_) : System(N_, dim_, omega_) {}
 
+    Interacting(int N_, int dim_, double omega_, double a_) : System(N_, dim_, omega_, a_) {} 
+
     virtual long double evaluate_wf(long double *rk, int k) {
         long double wf, sing_part, jastrow;
         long double dist;
