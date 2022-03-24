@@ -35,6 +35,9 @@ int main(int argc, char **argv) {
                 solver.solve(alpha);
                 solver.write_results(filename, path);
             }
+
+            delete ind_ho;
+            delete met;
         }
     }
 
