@@ -28,7 +28,7 @@ private:
     double equi_fraction;
     double measure_after;
     long measure_cycles;
-    int print_skip;
+    long print_skip;
 
     double eta = 1e-4;
     double tol = 1e-6;
@@ -75,9 +75,10 @@ public:
         equi_fraction = equi_fraction_;
         measure_after = mc_cycles * equi_fraction;
         measure_cycles = mc_cycles * (1.0 - equi_fraction);
+        print_skip = mc_cycles / 2;
 
-        E_sampled = new long double[measure_cycles];
-        E2_sampled = new long double[measure_cycles];
+        E_sampled = new long double[mc_cycles];
+        E2_sampled = new long double[mc_cycles];
     }
 
     ~Solver() {
@@ -135,7 +136,7 @@ public:
             E_sampled[t] = E_l;
             E2_sampled[t] = E_l * E_l;
 
-            if(t >= measure_after) {
+            if (t >= measure_after) {
                 E += E_sampled[t];
                 E2 += E2_sampled[t];
             }
