@@ -120,7 +120,7 @@ public:
         printf("\n");
 
         auto start = std::chrono::steady_clock::now();
-        for (int t = 0; t < mc_cycles; t++) {
+        for (long t = 0; t < mc_cycles; t++) {
             idx_p = rng->rand() % system->N;
 
             ratio = mc_sampler->step(r_new, idx_p);
