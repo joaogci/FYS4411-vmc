@@ -83,8 +83,6 @@ public:
 
     ~Solver() {
         delete rng;
-        delete system;
-        delete mc_sampler;
     }
 
     void set_solve_params(long mc_cycles_, double equi_fraction_) {
