@@ -136,8 +136,8 @@ public:
             E2_sampled[t] = E_l * E_l;
 
             if(t >= measure_after) {
-                E += E_l;
-                E2 += E_l * E_l;
+                E += E_sampled[t];
+                E2 += E2_sampled[t];
             }
 
             if (t == print_skip) {
