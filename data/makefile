@@ -1,6 +1,6 @@
 
 test_energies: test_energies.cpp
-	g++-11 -o test_energies -fopenmp -O3 212536736.cpp
+	g++-11 -o test_energies -fopenmp -O3 test_energies.cpp
 
 step_len_comp: step_len_comp.cpp
 	g++-11 -o step_len_comp -fopenmp -O3 step_len_comp.cpp
