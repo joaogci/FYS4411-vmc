@@ -1,11 +1,11 @@
 
-non_int_dim: non_int_dim.cpp
-	g++-11 -o non_int_dim -fopenmp -O3 non_int_dim.cpp
+test_energies: test_energies.cpp
+	g++-11 -o test_energies -fopenmp -O3 212536736.cpp
 
-non_int_step_len: non_int_step_len.cpp
-	g++-11 -o non_int_step_len -fopenmp -O3 non_int_step_len.cpp
+step_len_comp: step_len_comp.cpp
+	g++-11 -o step_len_comp -fopenmp -O3 step_len_comp.cpp
 
-non_int_importance: non_int_importance.cpp
-	g++-11 -o non_int_importance -fopenmp -O3 non_int_importance.cpp
+dt_comp: dt_comp.cpp
+	g++-11 -o dt_comp -fopenmp -O3 dt_comp.cpp
 	
 
