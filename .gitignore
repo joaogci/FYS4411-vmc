@@ -5,6 +5,9 @@
 morten_code
 initial_tests
 
+__pycache__
+.ipynb_checkpoints
+
 # Prerequisites
 *.d
 
