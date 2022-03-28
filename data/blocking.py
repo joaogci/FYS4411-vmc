@@ -1,16 +1,5 @@
+import sys
 import numpy as np
-
-'''
-def block_trans(arr):
-    max_k = int(len(arr)/2)
-
-    x = np.zeros(max_k)
-
-    for k in range(max_k):
-        x[k] = 0.5 * (arr[2*k - 1] + arr[2*k])
-
-    return x
-'''
 
 def autocov(arr, N):
     s1 = 0
@@ -24,26 +13,6 @@ def autocov(arr, N):
         s2 += arr[k] - meanarr
 
     return s1*s2/N
-
-'''
-def k(d, x, mean_x):
-    fd = 0
-    for i in range(n-d):
-        fd += (x[i] - mean_x) * (x[i + d] - mean_x)
-
-    fd *= 1/(n-d)
-
-    return fd/np.var(x)
-
-def get_tau(n, x, mean_x):
-    s = 0
-    for d in range(n-1, 0, -1):
-        s += k(d, x, mean_x)
-
-        #print(f"iteration {d}/{n}")
-
-    return 1 + 2*s
-'''
 
 def block(x):
     n = len(x)
@@ -82,14 +51,13 @@ def block(x):
             break
         if (k >= d - 1):
             print("More data needed")
-        
 
-    return res
+    return res, k
 
 
 if __name__ == "__main__":
 
-    path = "FYS4411-vmc/data/N100_d3/data_alpha0.300000.csv"
+    path = sys.argv[1]      #"../data/N100_d3/data_alpha0.300000.csv"
     infile = open(path)
 
     infile.readline()
@@ -104,60 +72,17 @@ if __name__ == "__main__":
 
     data = np.loadtxt(path, delimiter=',', skiprows=3)
     print("Read successful")
-    #print(data.shape)
-    #start = int(2**19)      #int(mc_cycles - measure_cycles)
     start = int(mc_cycles - measure_cycles)
     print(f"mc cycles: {mc_cycles}, log2 mc cycles: {np.log2(mc_cycles)}")
-    #print(f"measure cycles: {measure_cycles}, log2 measure cycles: {np.log2(measure_cycles)}")
     print(f"start idx: {start}, log2 start idx: {np.log2(start)}")
 
     energy, energy2 = data[:, 0][start:], data[:, 1][start:]
 
-    #delta_t = 2**9      # Only counting every 512 datapoint
-    
-    #energy = energy[::delta_t]
-    #energy2 = energy2[::delta_t]
-
-    #d = int(np.log2(len(energy)))
-
-    #gamma = np.zeros(d)         # autocovariance
-    #sigma_sqrd = np.zeros(d)    # variance
-    #sigma = np.zeros(d)         # std
-    #mean = np.zeros(d)          # average
-    #mean = np.mean(energy)
-
-    '''
-    n = len(energy)
-    print("starting get tau")
-    tau = get_tau(n, energy, mean)
-    print("finished get tau")
-
-    for i in range(d):
-        N = 2**(d-i) 
-        n = len(energy)
-        s = 0
-
-        for j in range(n):
-            s += energy2[j] - energy[j]**2
-
-        gamma[i] = autocov(energy, n)
-        sigma_sqrd[i] = (1 + 2*tau/delta_t)/N * s
-        #sigma[i] = np.sqrt(s/N)
-
-        energy = block_trans(energy)
-        energy2 = block_trans(energy2)
-    '''
-    sigma_sqrd = block(energy)
+    sigma_sqrd, blocking_iterations = block(energy)
     sigma = np.sqrt(sigma_sqrd)
 
-    #print("autovariance:")
-    #print(gamma)
-
-    print("variance:")
+    print("variance after blocking:")
     print(sigma_sqrd)
 
-    print("std:")
+    print("std after blocking:")
     print(sigma)
-
-    #print("average:")
-    #print(mean)
