@@ -19,7 +19,7 @@ public:
             r[k][d] = rk[d];
         }
 
-        double r2_sum = 0;
+        long double r2_sum = 0;
         for (int i = 0; i < N; i++) {
             for (int d = 0; d < dim; ++d) {
                 r2_sum += SQUARE(r[i][d]);
@@ -40,7 +40,7 @@ public:
     }
 
     virtual long double laplacian_wf(long double *rk, int k) {
-        double r2_sum = 0;
+        long double r2_sum = 0;
         for (int d = 0; d < dim; ++d) {
             r2_sum += SQUARE(rk[d]);
         }
@@ -55,7 +55,7 @@ public:
     }
 
     virtual long double local_energy() {
-        double r2_sum = 0;
+        long double r2_sum = 0;
         for (int i = 0; i < N; ++i) {
             for (int d = 0; d < dim; ++d) {
                 r2_sum += SQUARE(r[i][d]);
