@@ -107,8 +107,8 @@ def process_data(directory_name, save_file_name):
 
     print("Writing output file.")
     with open(save_file_name, "w") as file:
-        file.write("n_steps\n")
-        file.write(f"{len(steps)}\n")
+        file.write("n_steps,n_alphas\n")
+        file.write(f"{len(steps)},{len(alphas)}\n")
         
         for j in range(len(alphas)):
             file.write("\nalpha,runtime,acceptance_ratio,sampling_param\n")
