@@ -19,6 +19,9 @@ protected:
     
 public:
 
+    double step_length = -1;
+    double dt = -1;
+
     MonteCarlo() {}
 
     ~MonteCarlo() {}

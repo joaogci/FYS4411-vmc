@@ -6,8 +6,6 @@
 class Metropolis : public MonteCarlo {
 private: 
 
-    double step_length;
-
     virtual long double acceptence_ratio(long double *r_new, int k) {
         long double wf_new = system->evaluate_wf(r_new, k);
         long double wf_old = system->evaluate_wf(system->r[k], k);

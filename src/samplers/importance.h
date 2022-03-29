@@ -8,7 +8,6 @@ class Importance : public MonteCarlo {
 private:
 
     double D = 0.5;
-    double dt = 0.001;
     double sqrt_dt = sqrt(dt);
 
     virtual long double acceptence_ratio(long double *r_new, int k) {

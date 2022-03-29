@@ -205,8 +205,8 @@ public:
         std::ofstream file1(file_loc);
         if (file1.is_open()) {
             file1 << std::setprecision(10);
-            file1 << "mc_cycles,measure_cycles,alpha,runtime,acceptance_ratio\n";
-            file1 << mc_cycles << "," << measure_cycles << "," << alpha << "," << run_time << "," << accepted_ratio << "\n";
+            file1 << "mc_cycles,measure_cycles,alpha,runtime,acceptance_ratio,sampling_param\n";
+            file1 << mc_cycles << "," << measure_cycles << "," << alpha << "," << run_time << "," << accepted_ratio << "," << ((mc_sampler->dt != -1) ? mc_sampler->dt : mc_sampler->step_length) << "\n";
             file1 << "energy,energy2\n";
             for (int i = 0; i < mc_cycles; i++) {
                 file1 << E_sampled[i] << "," << E2_sampled[i] << "\n";
