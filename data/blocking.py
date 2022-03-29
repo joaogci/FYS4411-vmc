@@ -36,8 +36,8 @@ def block(x):
         x = 1/2 * (x_1 + x_2)
 
     # Generate M_k values by using magic
-    with np.seterr(divide='ignore'):
-        M = (np.cumsum( ( (gamma/sample_var)**2 * 2**np.arange(1, d + 1)[::-1] )[::-1] ) )[::-1]
+    np.seterr(divide='ignore', invalid='ignore')
+    M = (np.cumsum( ( (gamma/sample_var)**2 * 2**np.arange(1, d + 1)[::-1] )[::-1] ) )[::-1]
 
     # Chi squared numbers
     q = np.array([6.634897, 9.210340, 11.344867, 13.276704, 15.086272, 16.811894, \
@@ -49,8 +49,6 @@ def block(x):
     for k in range(d):
         if (M[k] < q[k]):
             break
-        # if (k >= d - 1):
-            # print("More data needed")
     
     res = sample_var[k]/(2**(d - k))
     return res, k
