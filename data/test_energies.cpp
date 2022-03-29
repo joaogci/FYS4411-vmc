@@ -16,7 +16,6 @@ int main(int argc, char **argv) {
     omp_set_num_threads(4);
     #pragma omp parallel for
     for (int Ni = 0; Ni < 4; Ni++) {
-        omp_set_nested(3);
         #pragma omp parallel for 
         for (int di = 0; di < 3; di++) {
             std::string filename, path;
@@ -29,9 +28,9 @@ int main(int argc, char **argv) {
 
             Solver solver(ind_ho, met, mc_cycles, equi_fraction, (unsigned int) time(NULL));
 
-            for (double alpha = 0.1; alpha < 1.0; alpha += 0.05) {
+            for (double alpha = 0.3; alpha <= 0.71; alpha += 0.04) {
                 filename = "data_alpha" + std::to_string(alpha) + ".csv";
-                path = "./part_b/N" + std::to_string(N) + "_d" + std::to_string(d) + "/";
+                path = "./part_b_test/N" + std::to_string(N) + "_d" + std::to_string(d) + "/";
 
                 solver.solve(alpha);
                 solver.write_results(filename, path);

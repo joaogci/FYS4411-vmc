@@ -26,9 +26,9 @@ int main(int argc, char **argv) {
 
         Solver solver(ind_ho, met, mc_cycles, equi_fraction, (unsigned int) time(NULL));
 
-        for (double alpha = 0.1; alpha < 1.0; alpha += 0.05) {
-            filename = "data_alpha" + std::to_string(alpha) + "_dt" + std::to_string(dt) + ".csv";
-            path = "./part_c/dt" + std::to_string(dt) + "/";
+        for (double alpha = 0.3; alpha <= 0.71; alpha += 0.04) {
+            filename = "data_alpha" + std::to_string(alpha) + ".csv";
+            path = "./part_c_dt_comp/dt" + std::to_string(dt) + "/";
 
             solver.solve(alpha);
             solver.write_results(filename, path);
