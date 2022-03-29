@@ -1,5 +1,5 @@
 n_steps,n_alphas
-4,
+4,11
 
 alpha,runtime,acceptance_ratio,sampling_param
 0.3,12.68956561,0.9792729616,0.1
