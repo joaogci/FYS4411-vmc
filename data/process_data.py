@@ -117,3 +117,36 @@ def process_data(directory_name, save_file_name):
             file.write("step,mean_E,std_E,std_E_blocking\n")
             for i, step in enumerate(steps):
                 file.write(",".join((str(step), str(mean_E[i, j]), str(std_E[i, j]), str(std_E_blocking[i, j]))) + "\n")
+
+def read_data_file(filename):
+    with open(filename, "r") as file:
+        file.readline()
+        n_steps, n_alphas = [int(x) for x in file.readline().strip().split(",")]
+
+    alphas = np.zeros(n_alphas)
+    runtime = np.zeros(n_alphas)
+    acceptance_ratio = np.zeros(n_alphas)
+    sampler_param = np.zeros(n_alphas)
+
+    steps = np.zeros((n_steps, n_alphas))
+    mean_E = np.zeros((n_steps, n_alphas))
+    std_E = np.zeros((n_steps, n_alphas))
+    std_E_blocking = np.zeros((n_steps, n_alphas))
+
+    with open(filename, "r") as file:
+        file.readline()
+        file.readline()
+        file.readline()
+        
+        for j in range(n_alphas):
+            file.readline()
+            alphas[j], runtime[j], acceptance_ratio[j], sampler_param[j] = [float(x) for x in file.readline().strip().split(",")]
+            file.readline()
+            
+            for i in range(n_steps):
+                steps[i, j], mean_E[i, j], std_E[i, j], std_E_blocking[i, j] = [float(x) for x in file.readline().strip().split(",")]
+            
+            file.readline()
+
+    return alphas, runtime, acceptance_ratio, sampler_param, steps, mean_E, std_E, std_E_blocking
+
