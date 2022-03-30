@@ -4,6 +4,8 @@
 ./morten_code
 morten_code
 initial_tests
+*.eps
+
 
 __pycache__
 .ipynb_checkpoints
