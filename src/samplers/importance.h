@@ -48,6 +48,7 @@ public:
 
     Importance(double dt_) : MonteCarlo() {
         dt = dt_;
+        sqrt_dt = sqrt(dt);
     }
 
     virtual void print_info() {
