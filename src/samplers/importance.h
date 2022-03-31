@@ -57,6 +57,7 @@ public:
 
     virtual void set_param(double param_) {
         dt = param_;
+        sqrt_dt = sqrt(dt);
     }
 
 };
