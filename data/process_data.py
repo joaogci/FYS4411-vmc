@@ -53,7 +53,7 @@ def block(x):
     res = sample_var[k]/(2**(d - k))
     return res, k
 
-def process_data(directory_name, save_file_name):
+def process_data(directory_name, save_file_name, before=0):
     files = os.listdir(directory_name)
     try:
         files.remove(".DS_Store")
@@ -90,16 +90,16 @@ def process_data(directory_name, save_file_name):
     print()
     print("Read files with success!")
 
-    steps = np.power(2, np.arange(int(np.log2(mc_cycles - measure_after)) + 1, int(np.log2(mc_cycles)) + 1))
+    steps = np.power(2, np.arange(int(np.log2(mc_cycles - measure_after)) + 1 - before, int(np.log2(mc_cycles)) + 1))
     mean_E = np.zeros((len(steps), len(alphas)))
     std_E = np.zeros((len(steps), len(alphas)))
     std_E_blocking = np.zeros((len(steps), len(alphas)))
 
     for j in range(len(alphas)):
         for i, step in enumerate(steps):
-            mean_E[i, j] = np.mean(energies[mc_cycles - measure_after:step, j])
-            std_E[i, j] = np.std(energies[mc_cycles - measure_after:step, j])
-            tmp, _ = block(energies[mc_cycles - measure_after:step, j])
+            mean_E[i, j] = np.mean(energies[mc_cycles - measure_after - np.power(2, before):step, j])
+            std_E[i, j] = np.std(energies[mc_cycles - measure_after - np.power(2, before):step, j])
+            tmp, _ = block(energies[mc_cycles - measure_after - np.power(2, before):step, j])
             std_E_blocking[i, j] = np.sqrt(tmp)
         
         print("processed alpha =", alphas[j], end="\r")
