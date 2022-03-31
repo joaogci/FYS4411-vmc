@@ -79,7 +79,7 @@ plt.savefig("std_E_vs_alphas_dt.eps", bbox_inches="tight")
 
 sl = 0.5
 dt = 0.1
-a = 0.54
+a = 0.66
 
 plt.close()
 plt.figure(9, figsize=(3, 2.25))
