@@ -52,7 +52,7 @@ sampler_param,
 steps, 
 mean_E, 
 std_E, 
-std_E_blocking) = read_data_file("./data_files/N100_d3_2.csv")
+std_E_blocking) = read_data_file("./data_files/data_N100_d3_2.csv")
 E_exact = 150
 
 for a in [0.3, 0.42, 0.62, 0.7]:
