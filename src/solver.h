@@ -169,8 +169,6 @@ public:
     double optimize_var_params(double alpha_0_) {
         double opt_alpha = alpha_0_;
         long double derivative = tol + 1;
-        long double Ep, Em;
-
         long count = 0;
 
         printf("Starting optimization with \neta: %.7f | tol: %.6f | h: %.6f | mc_cycles 2^%i \n", eta, tol, h, (int) log2(mc_cycles));
@@ -179,11 +177,8 @@ public:
 
         auto start = std::chrono::steady_clock::now();
         while (fabs(derivative) >= tol) {
-            Ep = solve_optimizer(opt_alpha + h);
-            Em = solve_optimizer(opt_alpha - h);
-
-            derivative = eta * (Ep - Em) / (2.0 * h);
-            opt_alpha += - derivative;
+            derivative = - eta * (solve_optimizer(opt_alpha + h) - solve_optimizer(opt_alpha - h)) / (2.0 * h);
+            opt_alpha += derivative;
 
             if (count % 10 == 0) {
                 printf("iter: %5li | alpha: %.4f | delta_alpha: %6.5Lf \n", count, opt_alpha, derivative);
