@@ -97,9 +97,9 @@ def process_data(directory_name, save_file_name, before=0):
 
     for j in range(len(alphas)):
         for i, step in enumerate(steps):
-            mean_E[i, j] = np.mean(energies[mc_cycles - measure_after - np.power(2, before):step, j])
-            std_E[i, j] = np.std(energies[mc_cycles - measure_after - np.power(2, before):step, j])
-            tmp, _ = block(energies[mc_cycles - measure_after - np.power(2, before):step, j])
+            mean_E[i, j] = np.mean(energies[2**(int(np.log2(mc_cycles - measure_after)) - before):step, j])
+            std_E[i, j] = np.std(energies[2**(int(np.log2(mc_cycles - measure_after)) - before):step, j])
+            tmp, _ = block(energies[2**(int(np.log2(mc_cycles - measure_after)) - before):step, j])
             std_E_blocking[i, j] = np.sqrt(tmp)
         
         print("processed alpha =", alphas[j], end="\r")
