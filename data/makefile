@@ -11,4 +11,6 @@ step_len_comp: step_len_comp.cpp
 dt_comp: dt_comp.cpp
 	g++-11 -o dt_comp -fopenmp -O3 dt_comp.cpp
 	
+gradient_descent: gradient_descent.cpp
+	g++-11 -o gradient_descent -O3 gradient_descent.cpp
 
