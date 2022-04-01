@@ -14,3 +14,5 @@ dt_comp: dt_comp.cpp
 gradient_descent: gradient_descent.cpp
 	g++-11 -o gradient_descent -O3 gradient_descent.cpp
 
+interaction: interaction.cpp
+	g++-11 -o interaction -O3 interaction.cpp
