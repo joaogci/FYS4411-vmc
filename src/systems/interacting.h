@@ -27,7 +27,7 @@ public:
 
         for (int i = 0; i < N; i++) {
             for (int d = 0; d < dim; ++d) {
-                r2_sum += SQUARE(r[i][d]);
+                r2_sum += (d != 2) ? SQUARE(r[i][d]) : beta * SQUARE(r[i][d]);
             }
         }
         sing_part = exp(- alpha * r2_sum);
