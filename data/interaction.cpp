@@ -39,12 +39,11 @@ int main(int argc, char **argv) {
 
         Solver solver(ind_ho, met, mc_cycles / NUM_THREADS, equi_fraction, (unsigned int) time(NULL));
         solver.solve(opt_alpha);
-        solver.write_results("data_interaction_thread" + std::to_string(omp_get_thread_num()) + "N" + std::string(N) + "_alpha" + std::to_string(opt_alpha) + ".csv", "./part_g_interaction/")
+        solver.write_results("data_interaction_thread" + std::to_string(omp_get_thread_num()) + "N" + std::to_string(N) + "_alpha" + std::to_string(opt_alpha) + ".csv", "./part_g_interaction/");
     
         delete ind_ho;
         delete met;
     }
-
 
     return 0;
 }
