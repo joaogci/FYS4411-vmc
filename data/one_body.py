@@ -51,10 +51,13 @@ def one_body_density(M, m, lim, alpha, N, dim, a=0.00433):
 if __name__ == '__main__':
     N = 10
     d = 3
-    alpha = 0.5
+    alpha = 0.5054
     
-    r, one_body = one_body_density(1000000, 15, 3, 0.5, 10, 3)
-    
+    r, one_body = one_body_density(100000, 10, 3, 0.5, 10, 3)
+
+    np.savetxt("one_body_density.csv", one_body)
+    np.savetxt("r_one_body_density.csv", one_body)
+
     plt.plot(r, one_body, '.')
     plt.savefig("one_body_test.eps")
 
